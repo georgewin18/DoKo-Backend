@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
 {
-    use HasFactory, SoftDeletes;
-
+    use HasFactory;
     protected $table = 'task';
 
     protected $fillable = [
@@ -22,8 +21,22 @@ class Task extends Model
         'task_group_id',
     ];
 
-    public function taskGroup()
+    public function taskGroup(): BelongsTo
     {
         return $this->belongsTo(TaskGroup::class);
+    }
+
+    //Task Status
+    public function getStatusAttribute()
+    {
+        if ($this->progress == 0) {
+            return 'not_started';
+        } elseif ($this->progress > 0 && $this->progress < 100) {
+            return 'ongoing';
+        } elseif ($this->progress == 100) {
+            return 'completed';
+        }
+
+        return null;
     }
 }
