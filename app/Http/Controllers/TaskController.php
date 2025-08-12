@@ -19,16 +19,17 @@ class TaskController extends Controller
             'name' => 'required|string',
             'description' => 'nullable|string',
             'attachment' => 'nullable|string',
-            'date' => 'nullable|date',
-            'time' => 'nullable',
-            'progress' => 'required|integer|min:0|max:100',
+            'date' => 'required|date',
+            'time' => 'required',
+            'progress' => 'sometimes|integer|min:0|max:100',
             'task_group_id' => 'required|exists:task_group,id',
         ]);
 
-        $task = Task::create($validated);
+        if (!isset($validated['progress'])) {
+            $validated['progress'] = 0;
+        }
 
-        // Update counter
-        $task->taskGroup->updateTaskCounts();
+        $task = Task::create($validated);
 
         return response()->json($task, 201);
     }
@@ -46,15 +47,13 @@ class TaskController extends Controller
             'name' => 'sometimes|string',
             'description' => 'nullable|string',
             'attachment' => 'nullable|string',
-            'date' => 'nullable|date',
-            'time' => 'nullable',
+            'date' => 'sometimes|date',
+            'time' => 'sometimes',
             'progress' => 'sometimes|integer|min:0|max:100',
             'task_group_id' => 'sometimes|exists:task_group,id',
         ]);
 
         $task->update($validated);
-
-        $task->taskGroup->updateTaskCounts();
 
         return response()->json($task);
     }
@@ -62,12 +61,8 @@ class TaskController extends Controller
     public function destroy($id)
     {
         $task = Task::findOrFail($id);
-        $group = $task->taskGroup;
 
         $task->delete();
-
-        // Update counter
-        $group->updateTaskCounts();
 
         return response()->json(['message' => 'Task deleted successfully']);
     }
