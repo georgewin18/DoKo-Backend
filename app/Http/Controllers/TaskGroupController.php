@@ -12,10 +12,6 @@ class TaskGroupController extends Controller
     {
         $taskGroup = TaskGroup::with('tasks')->get();
 
-        foreach ($taskGroup as $group) {
-            $group->updateTaskCounts();
-        }
-
         return response()->json($taskGroup);
     }
 
@@ -36,7 +32,6 @@ class TaskGroupController extends Controller
     public function show($id)
     {
         $taskGroup = TaskGroup::with('tasks')->findOrFail($id);
-        $taskGroup->updateTaskCounts();
 
         return response()->json($taskGroup);
     }
