@@ -58,20 +58,25 @@ class TaskControllerTest extends TestCase
             'time' => '10:00',
             'task_group_id' => 1,
         ];
-        $request = new Request($data);
-
+        
         $dataWithProgress = $data + ['progress' => 0];
 
+        $requestMock = $this->mock(Request::class);
+        
+        $requestMock->shouldReceive('validate')
+                    ->once()
+                    ->andReturn($data);
+        
         $fakeTask = new Task($dataWithProgress);
         $fakeTask->id = 1;
 
         $this->repositoryMock
             ->shouldReceive('create')
             ->once()
-            ->with($dataWithProgress) // Verifikasi data lengkap dikirim ke repo
+            ->with($dataWithProgress)
             ->andReturn($fakeTask);
 
-        $response = $this->controller->store($request);
+        $response = $this->controller->store($requestMock);
 
         $this->assertEquals(201, $response->getStatusCode());
         $this->assertEquals($fakeTask->toJson(), $response->getContent());
@@ -120,9 +125,14 @@ class TaskControllerTest extends TestCase
     {
         $id = 1;
         $updateData = ['name' => 'Nama Baru'];
-        $request = new Request($updateData);
 
-        $updatedTask = new Task(['name' => 'Nama Baru']);
+        $requestMock = $this->mock(Request::class);
+        
+        $requestMock->shouldReceive('validate')
+                    ->once()
+                    ->andReturn($updateData);
+
+        $updatedTask = new Task($updateData);
         $updatedTask->id = $id;
 
         $this->repositoryMock
@@ -131,7 +141,7 @@ class TaskControllerTest extends TestCase
             ->with($id, $updateData)
             ->andReturn($updatedTask);
 
-        $response = $this->controller->update($request, $id);
+        $response = $this->controller->update($requestMock, $id);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($updatedTask->toJson(), $response->getContent());
