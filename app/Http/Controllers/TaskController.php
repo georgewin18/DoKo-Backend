@@ -2,15 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
-use App\Models\TaskGroup;
 use Illuminate\Http\Request;
+use App\Repositories\TaskRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TaskController extends Controller
 {
+    protected $repository;
+
+    public function __construct(TaskRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index()
     {
-        return response()->json(Task::with('taskGroup')->get());
+        return response()->json($this->repository->getAllWithGroup());
     }
 
     public function store(Request $request)
@@ -29,20 +36,23 @@ class TaskController extends Controller
             $validated['progress'] = 0;
         }
 
-        $task = Task::create($validated);
+        $task = $this->repository->create($validated);
 
         return response()->json($task, 201);
     }
 
     public function show($id)
     {
-        return response()->json(Task::with('taskGroup')->findOrFail($id));
+        try {
+            $task = $this->repository->findOrFailWithGroup($id);
+            return response()->json($task);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
-
         $validated = $request->validate([
             'name' => 'sometimes|string',
             'description' => 'nullable|string',
@@ -53,17 +63,21 @@ class TaskController extends Controller
             'task_group_id' => 'sometimes|exists:task_group,id',
         ]);
 
-        $task->update($validated);
-
-        return response()->json($task);
+        try {
+            $task = $this->repository->update($id, $validated);
+            return response()->json($task);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
     }
 
     public function destroy($id)
     {
-        $task = Task::findOrFail($id);
-
-        $task->delete();
-
-        return response()->json(['message' => 'Task deleted successfully']);
+        try {
+            $this->repository->delete($id);
+            return response()->json(['message' => 'Task deleted successfully']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
     }
 }
