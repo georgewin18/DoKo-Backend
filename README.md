@@ -1,61 +1,126 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# DoKo - Backend API
 
-## About Laravel
+## Description
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This is a simple backend API developed using **Laravel** to manage task groups and tasks. The API supports CRUD (Create, Read, Update, Delete) operations for two main entities: `Task Group` and `Task`.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technologies Used
+- **Laravel**: The PHP framework used to build the backend API.
+- **Supabase**: The cloud database platform providing a PostgreSQL database.
+- **PHP**: the primary programming language.
+- **Composer**: A dependency manager for Laravel and PHP.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Instalation and Setup
 
-## Learning Laravel
+Follow these steps to get the project running on your local machine.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. System Requirements
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Ensure you have the following software installed:
+- **PHP** (version 8.2 or newer)
+- **Composer**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Getting Started
 
-## Laravel Sponsors
+1. clone this repository:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone https://github.com/pens-pbl/2025-doko-backend.git .
+cd 2025-doko-backend
+```
 
-### Premium Partners
+2. Install all PHP dependencies with Composer:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer install
+```
 
-## Contributing
+3. Create `.env` file according to the `.env.example` file:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.example .env
+```
 
-## Code of Conduct
+### `.env` Configuration
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Open the newly created `.env` file and configure the connection to your Supabase database.
 
-## Security Vulnerabilities
+You must provide the complete `DATABASE_URL` obtained from your Supabase Dashboard.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+DB_CONNECTION=pgsql
+# Get your DB_URL from your project Dashboard > Connect > Choose the Session Pooler
+DB_URL="postgres://[USER]:[PASSWORD]@[HOST]:[PORT]/[DATABASE-NAME]
+```
 
-## License
+### Running the project
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Once the setup is complete, you can run the backend with the following steps
+
+1. Run Database Migrations
+This command will create all necesary tables in your Supabase database.
+
+```bash
+php artisan migrate
+```
+
+2. Run Seeders (Optional, for populating initial data)
+This command will fill your tables with dummy data useful for testing
+
+```bash
+php artisan db:seed
+```
+
+3. Start the Laravel Server
+This command will start the local development server at `http://127.0.0.1:8000`
+
+
+```bash
+php artisan serve
+```
+
+### API Endpoints
+
+Here is a list of the available API endpoints for managing `TaskGroup`, `Task`, and `FocusTimer` resources:
+
+
+| Method   | URI                     | Descriptiton                        |
+|----------|-------------------------|-------------------------------------|
+| `GET`    | `/api/task-groups`      | Retrieve all task groups.           |
+| `GET`    | `/api/task-groups/{id}` | Retrieve a single task group by ID. |
+| `POST`   | `/api/task-groups`      | Create a new task group.            |
+| `PUT`    | `/api/task-groups/{id}` | Update a task group's data.         |
+| `DELETE` | `/api/task-groups/{id}` | Delete a task group.                |
+| `GET`    | `/api/tasks`            | Retrieve all tasks.                 |
+| `GET`    | `/api/tasks/{id}`       | Retrieve a single task by ID.       |
+| `POST`   | `/api/tasks`            | Create a new task.                  |
+| `PUT`    | `/api/tasks/{id}`       | Update a task's data.               |
+| `DELETE` | `/api/tasks/{id}`       | Delete a task.                      |
+| `GET`    | `/api/focus-timer`      | Retrieve focus timer.               |
+| `GET`    | `/api/focus-timer/{id}` | Retrieve a single focus timer by ID.|
+| `POST`   | `/api/focus-timer`      | Create a new focus timer.           |
+| `PUT`    | `/api/focus-timer/{id}` | Update a focus timer's data.        |
+| `DELETE` | `/api/focus-timer/{id}` | Delete a focus timer.               |
+
+### Unit Test
+
+This project includes controller unit tests using Repository Mocking. This isolates controller logic from the database, allowing for fast execution.
+These tests verify that controllers call the correct repository methods and return the expected JSON responses.
+
+Here's the command to run the tests:
+
+- Task Group Test:
+  ```bash
+  php artisan test tests/Unit/TaskGroupControllerTest.php
+  ```
+  
+- Task Test:
+  ```bash
+  php artisan test tests/Unit/TaskControllerTest.php
+  ```
+  
+- Focus Timer Test:
+  ```bash
+  php artisan test tests/Unit/FocusTimerControllerTest.php
+  ```
